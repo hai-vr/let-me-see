@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Resilience.LetMeSee
 {
@@ -13,6 +15,8 @@ namespace Resilience.LetMeSee
             Application.onBeforeRender += OnBeforeRender;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            EditorSceneManager.sceneSaving -= OnSceneSaving;
+            EditorSceneManager.sceneSaving += OnSceneSaving;
         }
 
         public static void UnregisterEditModeHook()
@@ -20,6 +24,7 @@ namespace Resilience.LetMeSee
             EditorApplication.update -= OnUpdate;
             Application.onBeforeRender -= OnBeforeRender;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorSceneManager.sceneSaving -= OnSceneSaving;
         }
 
         private static void OnPlayModeStateChanged(PlayModeStateChange change)
@@ -36,6 +41,11 @@ namespace Resilience.LetMeSee
         private static void OnBeforeRender()
         {
             LetMeSeeCore.Instance.DoBeforeRender();
+        }
+
+        private static void OnSceneSaving(Scene scene, string path)
+        {
+            LetMeSeeCore.Instance.DoSceneSaving();
         }
     }
 }

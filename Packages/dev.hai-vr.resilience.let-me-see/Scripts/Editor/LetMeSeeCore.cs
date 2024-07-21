@@ -210,6 +210,14 @@ namespace Resilience.LetMeSee
             }
         }
 
+        public void DoSceneSaving()
+        {
+            if (!Enabled) return;
+            
+            Debug.Log("(LetMeSee) Scene is being saved. Restoring camera...");
+            RestoreCamera();
+        }
+
         internal void DoHardStart()
         {
             if (Enabled) return;
