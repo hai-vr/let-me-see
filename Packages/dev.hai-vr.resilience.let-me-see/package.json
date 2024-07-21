@@ -1,0 +1,20 @@
+{
+  "name": "dev.hai-vr.resilience.let-me-see",
+  "displayName": "Haï ~ LetMeSee",
+  "version": "1.0.1",
+  "unity": "2022.3",
+  "description": "Lets you see in VR without entering Play mode. https://docs.hai-vr.dev/docs/products/let-me-see",
+  "vrchatVersion" : "2022.1.1",
+  "author" : {
+    "name" : "Haï~"
+  },
+  "dependencies": {
+    "com.unity.xr.management" : "4.5.0"
+  },
+  "vpmDependencies": {
+  },
+  "url" : "https://docs.hai-vr.dev/docs/products/let-me-see",
+  "documentationUrl": "https://docs.hai-vr.dev/docs/products/let-me-see",
+  "changelogUrl": "https://docs.hai-vr.dev/docs/changelogs/let-me-see",
+  "license": "MIT"
+}
