@@ -12,6 +12,7 @@ namespace Resilience.LetMeSee
     public class LetMeSeeEditorWindow : EditorWindow
     {
         private Vector2 _scrollPos;
+        private bool _waitOpenXR;
 
         private static T ColoredBackground<T>(bool isActive, Color bgColor, Func<T> inside)
         {
@@ -146,10 +147,13 @@ namespace Resilience.LetMeSee
             {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.HelpBox("OpenXR is missing from the project.\nInstall OpenXR?", MessageType.Warning);
-                if (GUILayout.Button("Install OpenXR", GUILayout.Width(200), GUILayout.Height(EditorGUIUtility.singleLineHeight * 2)))
+                EditorGUI.BeginDisabledGroup(_waitOpenXR);
+                if (GUILayout.Button(_waitOpenXR ? "Please wait..." : "Install OpenXR", GUILayout.Width(200), GUILayout.Height(EditorGUIUtility.singleLineHeight * 2)))
                 {
                     Client.Add("com.unity.xr.openxr");
+                    _waitOpenXR = true;
                 }
+                EditorGUI.EndDisabledGroup();
                 EditorGUILayout.EndHorizontal();
             }
 #endif
