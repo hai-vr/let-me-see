@@ -147,7 +147,8 @@ namespace Resilience.LetMeSee
                 _sceneRot = Quaternion.Euler(0, sceneRotEuler.y, 0);
             }
 
-            if (!IsUnityEditorWindowFocused())
+            // FIXME: HACK: Always call RepaintAllViews. There's some cases where the Game tab will stutter even if the Scene view updates properly.
+            if (true || !IsUnityEditorWindowFocused())
             {
                 // If the window is not focused, the Game Tab will not redraw. Force repaint it.
                 UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
@@ -262,6 +263,7 @@ namespace Resilience.LetMeSee
             if (main != null) return main;
             
             var hmd = Object.FindObjectOfType<Camera>();
+            if (hmd == null) return null;
             if (hmd.targetTexture != null) return null;
             
             return hmd;
