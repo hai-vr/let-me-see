@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using UnityEditor;
+#if !LETMESEE_OPENXR_EXISTS
 using UnityEditor.PackageManager;
+#endif
 using UnityEngine;
 using UnityEngine.XR.Management;
 
@@ -9,6 +11,8 @@ namespace Resilience.LetMeSee
 {
     public class LetMeSeeEditorWindow : EditorWindow
     {
+        private Vector2 _scrollPos;
+
         private static T ColoredBackground<T>(bool isActive, Color bgColor, Func<T> inside)
         {
             var col = GUI.color;
@@ -25,6 +29,8 @@ namespace Resilience.LetMeSee
         
         private void OnGUI()
         {
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, GUILayout.Height(position.height - EditorGUIUtility.singleLineHeight));
+            
             var isEnabled = LetMeSeeCore.Instance.Enabled;
             if (ColoredBackground(isEnabled, Color.red, () => GUILayout.Button("Run")))
             {
@@ -159,6 +165,8 @@ namespace Resilience.LetMeSee
 
             var lastValidPos = LetMeSeeCore.Instance.LastValidPoseDataPos();
             EditorGUILayout.LabelField(string.Format(CultureInfo.InvariantCulture, "Last valid pose data: {0:0.00000}, {1:0.00000}, {2:0.00000}", lastValidPos.x, lastValidPos.y, lastValidPos.z));
+            
+            EditorGUILayout.EndScrollView();
         }
 
         private static void ShowRescaler(float min, float max)
