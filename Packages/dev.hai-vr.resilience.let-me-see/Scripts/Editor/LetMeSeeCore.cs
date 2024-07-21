@@ -200,7 +200,8 @@ namespace Resilience.LetMeSee
                 }
                 else if (cameraMode == LetMeSeeCameraMode.LocalPosition)
                 {
-                    camera.transform.localPosition = recenterPos * rescale + LetMeSeeUserSettings.MoveUp * Vector3.up * LetMeSeeUserSettings.UserHeight * LetMeSeeUserSettings.Rescale;
+                    camera.transform.localPosition = Vector3.zero;
+                    camera.transform.position = camera.transform.position + recenterPos * rescale + LetMeSeeUserSettings.MoveUp * Vector3.up * LetMeSeeUserSettings.UserHeight * LetMeSeeUserSettings.Rescale;
                     camera.transform.rotation = recenterRot;
                 }
 
