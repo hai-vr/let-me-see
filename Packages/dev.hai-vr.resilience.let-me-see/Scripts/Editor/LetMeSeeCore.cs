@@ -14,8 +14,9 @@ namespace Resilience.LetMeSee
     {
         public static readonly LetMeSeeCore Instance = new LetMeSeeCore();
         internal const string Prefix = "Resilience.LetMeSee";
+        private const string CursorHolderName = "___LetMeSeeRoot___";
         private const float SmallAmount = 0.000001f;
-        
+
         private Vector3 _initialLocalPos = Vector3.zero;
         private Quaternion _initialLocalRot = Quaternion.identity;
         private Vector3 _initialLocalScale = Vector3.one;
@@ -49,6 +50,12 @@ namespace Resilience.LetMeSee
         private Quaternion _sceneRot;
         private SceneView _sceneViewToUse;
         private Camera _camRef;
+        
+        private bool _prevShowCursor;
+        
+        private GameObject _root;
+        private Transform _cursor;
+        private LineRenderer _lineRenderer;
 
         public bool Enabled
         {
@@ -68,6 +75,7 @@ namespace Resilience.LetMeSee
             if (Instance.Enabled)
             {
                 LetMeSeeHooks.RegisterEditModeHook();
+                Instance.RemakeCursorHolder();
             }
         }
 
@@ -153,6 +161,13 @@ namespace Resilience.LetMeSee
                 // If the window is not focused, the Game Tab will not redraw. Force repaint it.
                 UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
             }
+
+            var showCursor = LetMeSeeUserSettings.ShowCursor;
+            if (showCursor != _prevShowCursor && _cursor != null)
+            {
+                _cursor.gameObject.SetActive(showCursor);
+                _prevShowCursor = showCursor;
+            }
         }
 
         private static bool IsUnityEditorWindowFocused()
@@ -216,6 +231,44 @@ namespace Resilience.LetMeSee
             
             Debug.Log("(LetMeSee) Scene is being saved. Restoring camera...");
             RestoreCamera();
+
+            DestroyCursorHolder();
+            EditorApplication.delayCall += AfterSaving;
+        }
+
+        private void AfterSaving()
+        {
+            if (!Enabled) return;
+            
+            RemakeCursorHolder();
+        }
+
+        public void DoDuringSceneGui(SceneView sceneView)
+        {
+            if (!Enabled) return;
+            if (sceneView != _sceneViewToUse) return;
+            
+            if (LetMeSeeUserSettings.ShowCursor && _cursor != null)
+            {
+                var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+                _cursor.transform.position = ray.origin + ray.direction * 1f;
+                _cursor.transform.rotation = Quaternion.LookRotation(ray.direction);
+            }
+        }
+
+        private void DestroyCursorHolder()
+        {
+            if (_root != null)
+            {
+                Object.DestroyImmediate(_root);
+            }
+
+            var strayObject = GameObject.Find(CursorHolderName);
+            while (strayObject != null)
+            {
+                Object.DestroyImmediate(strayObject);
+                strayObject = GameObject.Find(CursorHolderName);
+            }
         }
 
         internal void DoHardStart()
@@ -236,6 +289,60 @@ namespace Resilience.LetMeSee
             SaveCamera();
 
             Enabled = true;
+
+            RemakeCursorHolder();
+        }
+
+        private void RemakeCursorHolder()
+        {
+            DestroyCursorHolder();
+            
+            _root = new GameObject
+            {
+                name = CursorHolderName,
+                // hideFlags = HideFlags.HideInHierarchy
+            };
+            _cursor = new GameObject
+            {
+                transform = { parent = _root.transform },
+                name = "CursorRenderer",
+            }.transform;
+            _lineRenderer = _cursor.gameObject.AddComponent<LineRenderer>();
+            _lineRenderer.sharedMaterial = new Material(Shader.Find("Resilience/LetMeSeeLine"));
+            var color = LetMeSeeUserSettings.CursorColor;
+            _lineRenderer.startColor = color;
+            _lineRenderer.endColor = color;
+            _lineRenderer.widthMultiplier = 0.005f;
+            _lineRenderer.useWorldSpace = false;
+            _lineRenderer.loop = true;
+            
+            var radius = 0.05f;
+            var pointers = new Vector3[50];
+            for (var index = 0; index < pointers.Length; index++)
+            {
+                var amount = Mathf.Lerp(0, 360, index / (pointers.Length - 1f));
+                pointers[index] = Vector3.zero + Quaternion.AngleAxis(amount, Vector3.forward) * Vector3.up * radius;
+            }
+
+            _lineRenderer.positionCount = 50;
+            _lineRenderer.SetPositions(pointers);
+
+            _prevShowCursor = LetMeSeeUserSettings.ShowCursor;
+            _cursor.gameObject.SetActive(LetMeSeeUserSettings.ShowCursor);
+            
+            if (Application.isPlaying)
+            {
+                Object.DontDestroyOnLoad(_root);
+            }
+        }
+
+        public void ForceUpdateCursorColor()
+        {
+            if (_lineRenderer == null) return;
+            
+            var color = LetMeSeeUserSettings.CursorColor;
+            _lineRenderer.startColor = color;
+            _lineRenderer.endColor = color;
         }
 
         internal void DoHardStop()
@@ -247,6 +354,7 @@ namespace Resilience.LetMeSee
             LetMeSeeHooks.UnregisterEditModeHook();
             
             RestoreCamera();
+            DestroyCursorHolder();
             
             Enabled = false;
         }

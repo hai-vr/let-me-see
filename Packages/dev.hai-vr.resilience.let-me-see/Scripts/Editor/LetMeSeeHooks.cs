@@ -17,6 +17,8 @@ namespace Resilience.LetMeSee
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
             EditorSceneManager.sceneSaving -= OnSceneSaving;
             EditorSceneManager.sceneSaving += OnSceneSaving;
+            SceneView.duringSceneGui -= OnDuringSceneGui;
+            SceneView.duringSceneGui += OnDuringSceneGui;
         }
 
         public static void UnregisterEditModeHook()
@@ -25,6 +27,7 @@ namespace Resilience.LetMeSee
             Application.onBeforeRender -= OnBeforeRender;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             EditorSceneManager.sceneSaving -= OnSceneSaving;
+            SceneView.duringSceneGui -= OnDuringSceneGui;
         }
 
         private static void OnPlayModeStateChanged(PlayModeStateChange change)
@@ -46,6 +49,11 @@ namespace Resilience.LetMeSee
         private static void OnSceneSaving(Scene scene, string path)
         {
             LetMeSeeCore.Instance.DoSceneSaving();
+        }
+
+        private static void OnDuringSceneGui(SceneView obj)
+        {
+            LetMeSeeCore.Instance.DoDuringSceneGui(obj);
         }
     }
 }

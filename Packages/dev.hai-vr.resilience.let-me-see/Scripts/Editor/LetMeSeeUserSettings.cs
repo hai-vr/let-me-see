@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace Resilience.LetMeSee
 {
@@ -44,6 +45,45 @@ namespace Resilience.LetMeSee
         {
             get => EditorPrefs.GetInt(Key(nameof(DefaultXRSettingOverride)), 0);
             set => EditorPrefs.SetInt(Key(nameof(DefaultXRSettingOverride)), value);
+        }
+        
+        private static bool _didCacheCursorColor;
+        private static Color _cachedCursorColor = Color.white;
+        public static Color CursorColor
+        {
+            get
+            {
+                if (!_didCacheCursorColor)
+                {
+                    _cachedCursorColor = FetchColor();
+                    _didCacheCursorColor = true;
+                }
+                return _cachedCursorColor;
+            }
+            set
+            {
+                _cachedCursorColor = value;
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".r"), value.r);
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".g"), value.g);
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".b"), value.b);
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".a"), value.a);
+            }
+        }
+
+        public static bool ShowCursor
+        {
+            get => EditorPrefs.GetBool(Key(nameof(ShowCursor)), true);
+            set => EditorPrefs.SetBool(Key(nameof(ShowCursor)), value);
+        }
+
+        private static Color FetchColor()
+        {
+            return new Color(
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".r"), 1f),
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".g"), 1f),
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".b"), 1f),
+                EditorPrefs.GetFloat(Key(nameof(CursorColor) + ".a"), 0.75f)
+            );
         }
 
         private static string Key(object prop)

@@ -125,6 +125,21 @@ namespace Resilience.LetMeSee
                 LetMeSeeCore.Instance.LockSceneView = !LetMeSeeCore.Instance.LockSceneView;
             }
 
+            var showCursor = EditorGUILayout.Toggle("Show cursor", LetMeSeeUserSettings.ShowCursor);
+            if (showCursor != LetMeSeeUserSettings.ShowCursor)
+            {
+                LetMeSeeUserSettings.ShowCursor = showCursor;
+            }
+            
+            
+            var cursorColor = LetMeSeeUserSettings.CursorColor;
+            var newColor = EditorGUILayout.ColorField(new GUIContent("Cursor color"), cursorColor);
+            if (newColor != cursorColor)
+            {
+                LetMeSeeUserSettings.CursorColor = newColor;
+                LetMeSeeCore.Instance.ForceUpdateCursorColor();
+            }
+
             if (newCameraMode != LetMeSeeCameraMode.SceneView)
             {
                 var newMoveUp = EditorGUILayout.Slider("Move camera up", LetMeSeeUserSettings.MoveUp, 0, 1);
