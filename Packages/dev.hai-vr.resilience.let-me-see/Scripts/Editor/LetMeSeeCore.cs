@@ -100,14 +100,14 @@ namespace Resilience.LetMeSee
 
             if (change == PlayModeStateChange.EnteredEditMode)
             {
-                EditorApplication.delayCall += TryHardRestart;
+                EditorApplication.delayCall += TrySpecialRestart;
             }
         }
 
-        private void TryHardRestart()
+        private void TrySpecialRestart()
         {
             if (!Enabled) return;
-            DoHardRestart();
+            DoSpecialRestart();
         }
 
         public void DoRecenter()
@@ -148,7 +148,7 @@ namespace Resilience.LetMeSee
             }
 
             // FIXME: HACK: Always call RepaintAllViews. There's some cases where the Game tab will stutter even if the Scene view updates properly.
-            if (true || !IsUnityEditorWindowFocused())
+            if (!Application.isPlaying || !IsUnityEditorWindowFocused())
             {
                 // If the window is not focused, the Game Tab will not redraw. Force repaint it.
                 UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
@@ -246,6 +246,14 @@ namespace Resilience.LetMeSee
         public void DoHardRestart()
         {
             DoHardStop();
+            DoHardStart();
+        }
+
+        public void DoSpecialRestart()
+        {
+            LetMeSeeHooks.UnregisterEditModeHook();
+            RestoreCamera();
+            Enabled = false;
             DoHardStart();
         }
 
