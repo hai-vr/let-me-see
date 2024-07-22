@@ -1,7 +1,7 @@
 {
   "name": "dev.hai-vr.resilience.let-me-see",
   "displayName": "Haï ~ LetMeSee",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "unity": "2022.3",
   "description": "Lets you see in VR without entering Play mode. https://docs.hai-vr.dev/docs/products/let-me-see",
   "vrchatVersion" : "2022.1.1",
