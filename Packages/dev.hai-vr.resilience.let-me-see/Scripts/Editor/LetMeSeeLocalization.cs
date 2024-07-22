@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -126,12 +125,12 @@ namespace Resilience.LetMeSee
             var localizations = new Dictionary<string, string>();
             
             // Assume that NewtonsoftJson is available in the project
-            var jsonObject = JObject.Parse(contents);
-            foreach (var pair in jsonObject)
-            {
-                var value = pair.Value.Value<string>();
-                localizations.Add(pair.Key, value);
-            }
+            // var jsonObject = JObject.Parse(contents);
+            // foreach (var pair in jsonObject)
+            // {
+            //     var value = pair.Value.Value<string>();
+            //     localizations.Add(pair.Key, value);
+            // }
 
             return localizations;
         }
@@ -170,8 +169,8 @@ namespace Resilience.LetMeSee
         private static void PrintDatabase()
         {
             var sorted = new SortedDictionary<string, string>(DebugKeyDatabase);
-            var jsonObject = JObject.FromObject(sorted);
-            Debug.Log(jsonObject.ToString());
+            // var jsonObject = JObject.FromObject(sorted);
+            // Debug.Log(jsonObject.ToString());
         }
 
         private static void INTROSPECT_INVOKE_ALL(Type type)
