@@ -124,13 +124,11 @@ namespace Resilience.LetMeSee
         {
             var localizations = new Dictionary<string, string>();
             
-            // Assume that NewtonsoftJson is available in the project
-            // var jsonObject = JObject.Parse(contents);
-            // foreach (var pair in jsonObject)
-            // {
-            //     var value = pair.Value.Value<string>();
-            //     localizations.Add(pair.Key, value);
-            // }
+            var jsonObject = LMSJSON.Parse(contents);
+            foreach (var key in jsonObject.Keys)
+            {
+                localizations.Add(key, jsonObject[key]);
+            }
 
             return localizations;
         }
