@@ -156,7 +156,7 @@ namespace Resilience.LetMeSee
             }
 
             // FIXME: HACK: Always call RepaintAllViews. There's some cases where the Game tab will stutter even if the Scene view updates properly.
-            if (!Application.isPlaying || !IsUnityEditorWindowFocused())
+            if (!Application.isPlaying || EditorApplication.isPaused || !IsUnityEditorWindowFocused())
             {
                 // If the window is not focused, the Game Tab will not redraw. Force repaint it.
                 UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
